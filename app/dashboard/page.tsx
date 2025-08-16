@@ -146,7 +146,7 @@ export default function AdminDashboard() {
   };
   return (
     <div className="flex min-h-screen ">
-      <main className="flex-1 ">
+      <main className="min-w-[100%]"> 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white p-4 rounded-md shadow">
             <div className="flex items-center gap-2 mb-2">

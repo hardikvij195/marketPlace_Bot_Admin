@@ -69,7 +69,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         }}
       />
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? "ml-16" : "ml-64"
         }`}
       >
@@ -77,7 +77,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           collapsed={sidebarCollapsed}
           setCollapsed={setSidebarCollapsed}
         />
-        <main className="flex-1 p-6 bg-white">{children}</main>
+        <main className="flex-1 p-6 overflow-y-auto bg-white">{children}</main>
       </div>
     </div>
   );
