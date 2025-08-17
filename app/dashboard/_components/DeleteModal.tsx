@@ -25,20 +25,6 @@ export default function DeleteModal({
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      let throwError = null;
-      // if (name == "users") {
-      //   const { error: authError } =
-      //     await supabaseBrowser.auth.admin.deleteUser(rowData?.id);
-      //   if (authError) throw authError;
-      // } else {
-      //   const { error } = await supabaseBrowser
-      //     .from(name)
-      //     .delete()
-      //     .eq("id", rowData?.id);
-      //   if (error) {
-      //     throw new Error(error?.message);
-      //   }
-      // }
       const { error } = await supabaseBrowser
         .from(name)
         .delete()

@@ -79,8 +79,7 @@ export default function Sidebar({ collapsed }: SidebarProps) {
     },
    
     
-    { title: "Reporting", href: "/dashboard/reports", icon: BarChart3 },
-    { title: "Promo Code", href: "/dashboard/promo-code", icon: Code },
+    { title: "Reports", href: "/dashboard/reports", icon: BarChart3 },
     { title: "Contact Us", href: "/dashboard/contactus", icon: Mail },
     { title: "Recycle", href: "/dashboard/recycle", icon: Recycle },
   ];

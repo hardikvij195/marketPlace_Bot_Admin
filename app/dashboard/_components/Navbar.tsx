@@ -16,6 +16,7 @@ interface NavbarProps {
   collapsed?: boolean;
   setCollapsed?: (collapsed: boolean) => void;
 }
+
 const pathName: any = {
   "/dashboard": "Dashboard",
   "/dashboard/users": "User Management",
@@ -27,7 +28,6 @@ const pathName: any = {
   "/dashboard/contactus": "Contact Us",
   "/dashboard/recycle": "Recycle",
   "/dashboard/admin": "Admin Management",
-
 };
 
 const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
@@ -40,7 +40,6 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
     const id = localStorage.getItem("seminarId");
     setSeminarId(id);
   }, []);
-  console.log(seminarId);
 
   const handleRefresh = () => {
     // Custom logic to refresh data or reload the page
@@ -84,6 +83,26 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       });
     }
   };
+
+  const handleExportRecycleBinFile = async () => {
+  try {
+    const { data, error, count } = await supabaseBrowser
+      .from("recycle_bin")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw new Error("Something went wrong!");
+    }
+
+    await exportToExcel(data, "recycle_bin");
+  } catch (error) {
+    showToast({
+      title: "Error",
+      description: "Something went wrong while exporting recycle bin data!",
+    });
+  }
+};
 
   const handleExportInvoiceFile = async () => {
     try {
@@ -271,57 +290,95 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       });
     }
   };
+
+  // New handler for exporting reports
+  const handleExportReports = async () => {
+    try {
+      const { data, error } = await supabaseBrowser
+        .from("cron_reports")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        throw new Error("Something went wrong fetching reports!");
+      }
+      // Prepare the data for export by flattening the JSON objects
+      const flattenedData = data.map(report => ({
+        id: report.id,
+        name: report.name,
+        type: report.type,
+        date_range: report.data.date_range,
+        total_count: report.data.total_count,
+        created_at: report.created_at
+      }));
+      await exportToExcel(flattenedData, "cron_reports");
+      showToast({
+        title: "Success",
+        description: "Reports exported successfully!",
+      });
+    } catch (error) {
+      console.error("Export failed:", error);
+      showToast({
+        title: "Error",
+        description: "Something went wrong while exporting reports!",
+      });
+    }
+  };
+
   const stats = useSelector((state: RootState) => state.dashboard);
   const tab = useSelector((state: RootState) => state.dashboard.SeminarTabName);
 
   const handleExport = async () => {
-    // Your export logic here (e.g., trigger CSV/PDF export)
-    if (pathname == "/dashboard") {
+    if (pathname === "/dashboard") {
       return await exportDashboardToExcel(stats);
-    } else if (pathname == "/dashboard/users") {
+    } else if (pathname === "/dashboard/users") {
       return await handleExportUserFile();
-    } else if (pathname == "/dashboard/subscription") {
+    } else if (pathname === "/dashboard/subscription") {
       await handleExportSubscriptionFile();
-    } else if (pathname == "/dashboard/invoices") {
+    } else if (pathname === "/dashboard/invoices") {
       await handleExportInvoiceFile();
-    } else if (pathname == "/dashboard/contactus") {
+    } else if (pathname === "/dashboard/contactus") {
       await handleExportContactUsFile();
-    } else if (pathname == "/dashboard/seminar") {
+    } else if (pathname === "/dashboard/seminar") {
       await handleExporSeminartFile();
-    } else if (pathname == "/dashboard/seminar-signup") {
+    } else if (pathname === "/dashboard/seminar-signup") {
       await handleExporSeminartSignupFile(seminarId, tab);
-    } else if (pathname == "/dashboard/viptier") {
+    } else if (pathname === "/dashboard/viptier") {
       await handleExporVipTiertFile();
-    } else if (pathname == "/dashboard/details") {
+    } else if (pathname === "/dashboard/details") {
       await handleExportToolFile();
-    } else if (pathname == "/dashboard/details") {
+     } else if (pathname === "/dashboard/recycle") {
+    await handleExportRecycleBinFile();
+    } else if (pathname === "/dashboard/details") {
       const codeType = localStorage.getItem("subRoute");
-      if (codeType == "registration") {
+      if (codeType === "registration") {
         await handleExportRegistrationFile();
       } else {
         await handleExportSignUpFile();
       }
+    } else if (pathname === "/dashboard/reports") {
+      await handleExportReports();
     }
 
     console.log(pathname, "pathnamepathname");
   };
+
   console.log(pathName[pathname], "hololo");
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center space-x-2">
-       <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed?.(!collapsed)}
-            className="h-10 w-8"
-          >
-            {collapsed ? (
-              <ChevronRight className="h-6 w-6" />
-            ) : (
-              <ChevronLeft className="h-6 w-6" />
-            )}
-          </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCollapsed?.(!collapsed)}
+          className="h-10 w-8"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-6 w-6" />
+          ) : (
+            <ChevronLeft className="h-6 w-6" />
+          )}
+        </Button>
         <span className="lg:text-lg md:text-md text-sm font-bold text-gray-800">
           {(() => {
             const title =

@@ -418,7 +418,7 @@ export default function SubscriptionsTable() {
                   {data.map((r: any) => (
                     <TableRow key={r.id} className="hover:bg-muted/30">
                       <TableCell>
-                        {r?.users?.display_name || r?.users?.full_name}
+                        {r?.users?.display_name || r?.users?.name}
                       </TableCell>
                       <TableCell>{r?.users?.phone || "-"}</TableCell>
                       <TableCell className="capitalize">
@@ -434,7 +434,7 @@ export default function SubscriptionsTable() {
                         })} */}
                         {displayValidTill(r?.created_at)}
                       </TableCell>
-                      <TableCell className="capitalize">Stripe</TableCell>
+                      <TableCell className="capitalize">Paypal</TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
@@ -519,7 +519,7 @@ export default function SubscriptionsTable() {
               <div>
                 {" "}
                 {selectedData?.users?.display_name ||
-                  selectedData?.users?.full_name}
+                  selectedData?.users?.name}
               </div>
 
               <div className="font-medium">Plan:</div>
@@ -541,7 +541,7 @@ export default function SubscriptionsTable() {
               </div>
 
               <div className="font-medium">Method:</div>
-              <div>Stripe</div>
+              <div>Paypal</div>
 
               <div className="font-medium">Payment Id:</div>
               <div className="break-words max-w-full">

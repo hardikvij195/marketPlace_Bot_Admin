@@ -35,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { showToast } from "@/hooks/useToast";
 import { exportToExcel } from "@/lib/exportToExcel";
 import PaginationBar from "../_components/Pagination";
+import DeleteModal from "../_components/DeleteModal";
 
 const PhoneInput = dynamic(() => import("react-phone-input-2"), { ssr: false });
 
@@ -64,6 +65,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+    const [isOpenDeleted, setIsOpenDeleted] = useState(false);
   const [newSem, setNewSem] = useState<User>({
     id: crypto.randomUUID(),
     email: "",
@@ -91,6 +93,7 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<any>(null);
+    const [rowData, setRowData] = useState<any>(null);
   const totalPages = Math.ceil(total / limit);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -547,12 +550,17 @@ export default function AdminPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       <div className="flex items-center gap-4 ">
-                        <Trash2
-                          className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors duration-150 cursor-pointer"
+                         <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-gray-200"
                           onClick={() => {
-                            setUserToDelete(admmin); // Store the user object here
+                            setIsOpenDeleted(true);
+                            setRowData(admmin);
                           }}
-                        />
+                        >
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </Button>
                         <button
                           disabled={loading}
                           onClick={() => {
@@ -588,6 +596,14 @@ export default function AdminPage() {
                 setLimit={setLimit}
               />
             </div>
+            <DeleteModal
+                    rowData={rowData}
+                    isOpen={isOpenDeleted}
+                    setIsOpen={setIsOpenDeleted}
+                    setRowData={setRowData}
+                    handleRefresh={handleRefresh}
+                    name="users"
+                  />
           </div>
         )}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

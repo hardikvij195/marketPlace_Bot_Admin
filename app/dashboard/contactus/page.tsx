@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 type Contact = {
   name: string;
   email: string;
-  phone: string;
+  subject: string;
   message: string;
   [key: string]: any; // Add this if there are more fields from Supabase
 };
@@ -58,7 +58,7 @@ export default function ContactUsPage() {
     return (
       contact.name?.toLowerCase().includes(term) ||
       contact.email?.toLowerCase().includes(term) ||
-      contact.phone?.toLowerCase().includes(term)
+      contact.subject?.toLowerCase().includes(term)
     );
   });
 
@@ -156,7 +156,7 @@ export default function ContactUsPage() {
           <div className="relative mb-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by Name, Email, or Phone..."
+              placeholder="Search by Name or Email..."
               className="pl-9"
               value={searchTerm}
               disabled={loading && contacts.length === 0}
@@ -199,7 +199,7 @@ export default function ContactUsPage() {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Phone Number
+                   Subject
                   </th>
                   <th
                     scope="col"
@@ -233,7 +233,7 @@ export default function ContactUsPage() {
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {contact.phone}
+                      {contact.subject}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {contact.message}
@@ -347,8 +347,8 @@ export default function ContactUsPage() {
                 </a>
               </div>
 
-              <div className="font-medium"> Phone Number:</div>
-              <div>{selectedData?.phone}</div>
+              <div className="font-medium">  Subject:</div>
+              <div>{selectedData?.subject}</div>
 
               <div className="font-medium">Message:</div>
               <div>{selectedData?.message}</div>
