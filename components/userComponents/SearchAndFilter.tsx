@@ -31,7 +31,7 @@ export const SearchAndFilter = ({
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
           placeholder="Search users by name, email, or phone..."
-          className="pl-10 h-10 border-gray-300 focus:border-[#7e22ce] focus:ring-[#7e22ce]"
+          className="pl-10 h-10 border-gray-300"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
         />
@@ -49,7 +49,7 @@ export const SearchAndFilter = ({
       </Select> */}
 
       <Select value={planFilter} onValueChange={onPlanFilterChange}>
-        <SelectTrigger className="min-w-[180px] h-10 border-gray-300 focus:border-[#7e22ce] focus:ring-[#7e22ce]">
+        <SelectTrigger className="min-w-[180px] h-10 border-gray-300">
           <div className="flex items-center">
             <SelectValue placeholder="Filter by plan" />
           </div>

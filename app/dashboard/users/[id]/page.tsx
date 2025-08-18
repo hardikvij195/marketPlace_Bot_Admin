@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
 import { displayValidTill } from "@/lib/dateTimeFormatter";
 import PaginationBar from "../../_components/Pagination";
+import { ChevronLeft, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface Subscription {
   amount: string;
@@ -78,14 +80,14 @@ function UserSubscriptionsPage() {
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div className="flex items-center space-x-4 mb-6">
-        <button
-          onClick={() => navigate.back()}
-          className="px-4 cursor-pointer py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+        <Link href='/dashboard/users'
+         
+          className=""
         >
-          &larr; Back to Users
-        </button>
-        <h1 className="text-2xl font-bold">
-          Previous Subscriptions for User:{" "}
+         <ArrowLeft size={20} className="text-gray-500 cursor-pointer" />
+        </Link>
+        <h1 className="text-md font-semibold">
+
           <span className="text-blue-600">{subscriptions?.display_name}</span>
         </h1>
       </div>
@@ -143,18 +145,7 @@ function UserSubscriptionsPage() {
                     >
                       Amount
                     </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      Basic Amount
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      HST Tax
-                    </th>
+                    
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -185,12 +176,7 @@ function UserSubscriptionsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           ${sub.amount}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${sub.basic_amount}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {sub.hst_tax} %
-                        </td>
+                        
                       </tr>
                     ))
                 )}

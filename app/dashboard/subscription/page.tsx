@@ -283,19 +283,7 @@ export default function SubscriptionsTable() {
 
         {/* search + filters */}
         <div className="flex flex-col lg:flex-row gap-3">
-          <div className="relative flex-1 lg:w-full md-w-full w-[320px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by Username and Phone No."
-              className="pl-9"
-              value={search}
-              disabled={loading}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
+          
           <div className="relative lg:w-full md-w-full w-[320px]">
             <select
               value={status}
@@ -371,14 +359,14 @@ export default function SubscriptionsTable() {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 {[
-                  "Username",
-                  "Phone No.",
-                  "Plan",
-                  "Amount",
-                  "Date",
-                  "Method",
-                  "Status",
-                  "Action",
+                  "USER NAME",
+                  "PHONE",
+                  "PLAN",
+                  "AMOUNT",
+                  "DATE",
+                  "METHOD",
+                  "STATUS",
+                  "ACTIONS ",
                 ].map((h) => (
                   <TableHead key={h}>{h}</TableHead>
                 ))}
@@ -485,10 +473,9 @@ export default function SubscriptionsTable() {
                 </>
               )}
             </TableBody>
+            
           </Table>
-        </div>
-
-        <div className="mt-auto">
+          <div className="mt-auto">
           <PaginationBar
             page={page}
             setPage={setPage}
@@ -498,6 +485,9 @@ export default function SubscriptionsTable() {
             setLimit={setLimit}
           />
         </div>
+        </div>
+
+        
       </div>
 
       <DeleteModal
@@ -551,7 +541,7 @@ export default function SubscriptionsTable() {
               <div className="font-medium">Status:</div>
               <div>
                 <span
-                  className={`px-2 py-1 text-xs rounded ${
+                  className={` rounded ${
                     statusColor[selectedData?.status]
                   }`}
                 >

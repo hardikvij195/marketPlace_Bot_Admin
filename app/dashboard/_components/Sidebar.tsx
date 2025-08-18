@@ -92,14 +92,14 @@ export default function Sidebar({ collapsed }: SidebarProps) {
       )}
     >
       {/* ────────────────── BRAND ────────────────── */}
-      <div className="px-3 py-1.5 border-b border-gray-300 flex items-center justify-start">
-            <Bot
+      <div className="px-3 py-3 border-b border-gray-300 flex items-center justify-start">
+            <Image src='/Logo.png' alt="No Logo Found"  
               // Show smaller logo when collapsed (desktop or mobile)
-              width={collapsed ? 50 : 60}
-              height={collapsed ? 50 : 60}
+              width={collapsed ? 40 : 40}
+              height={collapsed ? 40 : 40}
               className="object-contain max-h-[50px] text-[#2563EB]"
             />
-            {/* Show text only when not collapsed (desktop or mobile) */}
+           
             {!collapsed && (
               <span className="ml-3 text-md font-semibold text-gray-800">
                MarketPlaceBot

@@ -158,7 +158,10 @@ export default function AdminDashboard() {
     ],
   };
 
-  const ratio = stats.totalUsers > 0 ? (stats.activeSubscribers / stats.totalUsers) * 100 : 0;
+const ratio = stats.totalUsers > 0 
+  ? `${stats.activeSubscribers}:${stats.totalUsers}` 
+  : "0:0";
+
 
   return (
     <div className="flex min-h-screen">
@@ -190,7 +193,7 @@ export default function AdminDashboard() {
                   <span className="font-semibold">Users to Subscribers Ratio</span>
                 </div>
                 <p className="text-2xl font-bold">
-                  {ratio.toFixed(2)}%
+                  {ratio}
                 </p>
               </div>
             </div>

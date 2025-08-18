@@ -28,6 +28,7 @@ const pathName: any = {
   "/dashboard/contactus": "Contact Us",
   "/dashboard/recycle": "Recycle",
   "/dashboard/admin": "Admin Management",
+  "/dashboard/users/[id]/edit": "Edit User Details",
 };
 
 const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
@@ -85,24 +86,24 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
   };
 
   const handleExportRecycleBinFile = async () => {
-  try {
-    const { data, error, count } = await supabaseBrowser
-      .from("recycle_bin")
-      .select("*", { count: "exact" })
-      .order("created_at", { ascending: false });
+    try {
+      const { data, error, count } = await supabaseBrowser
+        .from("recycle_bin")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
 
-    if (error) {
-      throw new Error("Something went wrong!");
+      if (error) {
+        throw new Error("Something went wrong!");
+      }
+
+      await exportToExcel(data, "recycle_bin");
+    } catch (error) {
+      showToast({
+        title: "Error",
+        description: "Something went wrong while exporting recycle bin data!",
+      });
     }
-
-    await exportToExcel(data, "recycle_bin");
-  } catch (error) {
-    showToast({
-      title: "Error",
-      description: "Something went wrong while exporting recycle bin data!",
-    });
-  }
-};
+  };
 
   const handleExportInvoiceFile = async () => {
     try {
@@ -302,13 +303,13 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
         throw new Error("Something went wrong fetching reports!");
       }
       // Prepare the data for export by flattening the JSON objects
-      const flattenedData = data.map(report => ({
+      const flattenedData = data.map((report) => ({
         id: report.id,
         name: report.name,
         type: report.type,
         date_range: report.data.date_range,
         total_count: report.data.total_count,
-        created_at: report.created_at
+        created_at: report.created_at,
       }));
       await exportToExcel(flattenedData, "cron_reports");
       showToast({
@@ -346,8 +347,8 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       await handleExporVipTiertFile();
     } else if (pathname === "/dashboard/details") {
       await handleExportToolFile();
-     } else if (pathname === "/dashboard/recycle") {
-    await handleExportRecycleBinFile();
+    } else if (pathname === "/dashboard/recycle") {
+      await handleExportRecycleBinFile();
     } else if (pathname === "/dashboard/details") {
       const codeType = localStorage.getItem("subRoute");
       if (codeType === "registration") {
@@ -358,11 +359,7 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
     } else if (pathname === "/dashboard/reports") {
       await handleExportReports();
     }
-
-    console.log(pathname, "pathnamepathname");
   };
-
-  console.log(pathName[pathname], "hololo");
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
@@ -381,12 +378,23 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
         </Button>
         <span className="lg:text-lg md:text-md text-sm font-bold text-gray-800">
           {(() => {
-            const title =
-              pathName[pathname] ||
-              (pathname.startsWith("/dashboard/users/") &&
-                pathname.split("/").length === 4 &&
-                pathName["/dashboard/users/[id]"]) ||
-              "";
+            let title = pathName[pathname] || "";
+
+            // Handle User Subscription page
+            if (
+              pathname.startsWith("/dashboard/users/") &&
+              pathname.split("/").length === 4
+            ) {
+              title = pathName["/dashboard/users/[id]"];
+            }
+
+            // Handle Edit User page
+            if (
+              pathname.startsWith("/dashboard/users/") &&
+              pathname.endsWith("/edit")
+            ) {
+              title = pathName["/dashboard/users/[id]/edit"];
+            }
 
             if (pathname === "/dashboard" && userRole) {
               return `${title} - ${

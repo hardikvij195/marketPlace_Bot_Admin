@@ -586,7 +586,7 @@ export default function AdminPage() {
                 ))}
               </tbody>
             </table>
-            <div className="mt-auto p-4">
+            <div className="mt-auto">
               <PaginationBar
                 page={page}
                 setPage={setPage}

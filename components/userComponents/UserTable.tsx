@@ -3,7 +3,17 @@ import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, History, Info, Trash2, Ban, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Download,
+  FileText,
+  History,
+  Info,
+  Trash2,
+  Ban,
+  CheckCircle,
+  Pencil,
+} from "lucide-react";
 import Modal from "@/app/dashboard/_components/Modal";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
 import { exportToExcel } from "@/lib/exportToExcel";
@@ -76,9 +86,11 @@ export const UserTable = ({
       .update({ fb_chatbot_user_blocked: newBlockStatus })
       .eq("id", userId);
     if (error) {
-      toast.error(`Error ${newBlockStatus ? 'blocking' : 'unblocking'} user`);
+      toast.error(`Error ${newBlockStatus ? "blocking" : "unblocking"} user`);
     } else {
-      toast.success(`User ${newBlockStatus ? 'blocked' : 'unblocked'} successfully!`);
+      toast.success(
+        `User ${newBlockStatus ? "blocked" : "unblocked"} successfully!`
+      );
       handleRefresh();
     }
   };
@@ -95,31 +107,31 @@ export const UserTable = ({
           </button>
         </div> */}
         <table className="w-full border-spacing-0">
-          <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Name
+          <thead className="bg-gray-50">
+            <tr className="border-b border-gray-200 ">
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                NAME
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Phone No.
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium  text-gray-500 text-xs">
+                PHONE
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Email
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                EMAIL
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Plan
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                PLAN
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Subscription Date
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                SUBSCRIPTION DATE
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Join Date
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                JOIN DATE
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Last Opened
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                LAST OPENED
               </th>
-              <th className="text-left py-3 lg:px-4 md:px-4 px-3 font-semibold text-gray-700 lg:text-md md:text-md text-sm">
-                Actions
+              <th className="text-left py-1 lg:px-4 md:px-4 px-3 font-medium text-gray-500 text-xs">
+                ACTIONS
               </th>
             </tr>
           </thead>
@@ -130,13 +142,11 @@ export const UserTable = ({
                   key={user.id}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors lg:text-md md:text-md text-sm"
                 >
-                  <td className="py-4 px-4 font-medium text-gray-900">
-                    {user.name}
-                  </td>
-                  <td className="py-4 px-4 text-center font-medium text-gray-900">
+                  <td className="py-4 px-4  text-gray-900">{user.name}</td>
+                  <td className="py-4 px-4 text-center  text-gray-900">
                     {user.phone ?? "-"}
                   </td>
-                  <td className="py-4 px-4 text-blue-600">{user.email}</td>
+                  <td className="py-4 px-4 text-gray-900 ">{user.email}</td>
                   <td className="py-4 px-4">
                     <StatusBadge status={user.subscription} />
                   </td>
@@ -179,40 +189,21 @@ export const UserTable = ({
                       >
                         <Info className="w-4 h-4" />
                       </button>
-                      <Link href={`users/${user.id}`}>
+                      <Link href={`/dashboard/users/${user.id}/edit`}>
                         <button className="cursor-pointer p-2 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200">
-                          <History className="w-4 h-4" />
+                          <Pencil className="w-4 h-4" />
                         </button>
                       </Link>
-                      {user.fb_chatbot_user_blocked ? (
-                        <button
-                          onClick={() => handleToggleBlockUser(user.id, true)}
-                          className="cursor-pointer p-2 rounded-md bg-green-100 text-green-500 hover:bg-green-200"
-                          title="Unblock User"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleToggleBlockUser(user.id, false)}
-                          className="cursor-pointer p-2 rounded-md bg-gray-100 text-red-500 hover:bg-red-100"
-                          title="Block User"
-                        >
-                          <Ban className="w-4 h-4" />
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-gray-500">
-                  <div className="flex flex-col justify-center items-center text-gray-900 p-6">
+                <td colSpan={8} className="h-[20vh]">
+                  <div className="flex flex-col justify-center items-center h-full text-gray-900">
                     <FileText className="w-16 h-16 text-gray-400 mb-4" />
-                    <h2 className="text-2xl font-semibold mb-2">
-                      No Data Found
-                    </h2>
+                    <h2 className="text-2xl font-medium mb-2">No Data Found</h2>
                   </div>
                 </td>
               </tr>
@@ -239,144 +230,241 @@ export const UserTable = ({
         handleRefresh={handleRefresh}
       />
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <div className="max-w-md max-h-[90vh] overflow-y-auto mx-auto bg-white rounded-2xl shadow-xl p-6">
+        <div className="max-w-md max-h-[90vh] overflow-y-auto mx-auto bg-white p-6">
           <div className="flex justify-between items-center border-b pb-4 mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {selectedData?.display_name}
+            <h2 className="text-2xl font-medium text-gray-800">
+              {selectedData?.display_name || selectedData?.name}
             </h2>
             <span
-              className={`text-xs font-semibold px-3 py-1 rounded-full ${
+              className={`text-xs font-medium px-3 py-1 rounded-full ${
                 selectedData?.status === "active"
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-600"
               }`}
             >
-              {selectedData?.status?.toUpperCase()}
+              {selectedData?.status?.toUpperCase() || "-"}
             </span>
           </div>
-          <div className="space-y-3 text-sm text-gray-700">
+
+          <div className="space-y-3 text-sm text-gray-500">
+            {/* Core fields */}
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">User ID:</span>
-              <span className="text-right">{selectedData?.id}</span>
+              <span>{selectedData?.id}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Name:</span>
+              <span>{selectedData?.name || "-"}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Email:</span>
-              <span className="text-right break-all">
-                {selectedData?.email}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-gray-600">Plan:</span>
-              <span className="text-right capitalize">
-                {selectedData?.subscription || "Free"}
-              </span>
+              <span>{selectedData?.email || "-"}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Phone:</span>
-              <span className="text-right capitalize">
-                {selectedData?.phone || "-"}
-              </span>
+              <span>{selectedData?.phone || "-"}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-600">Address:</span>
-              <span className="text-right capitalize">
-                {selectedData?.address || "-"}
-              </span>
+              <span className="font-medium text-gray-600">Role:</span>
+              <span>{selectedData?.role || "-"}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-600">City:</span>
-              <span className="text-right capitalize">
-                {selectedData?.city || "-"}
-              </span>
+              <span className="font-medium text-gray-600">Subscription:</span>
+              <span>{selectedData?.subscription || "Free"}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-gray-600">State:</span>
-              <span className="text-right capitalize">
-                {selectedData?.state || "-"}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-gray-600">Zip Code:</span>
-              <span className="text-right capitalize">
-                {selectedData?.zipCode || "-"}
-              </span>
-            </div>
+
+            {/* Timestamps */}
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Join Date:</span>
-              <span className="text-right">
+              <span>
                 {selectedData?.created_at
-                  ? displayValidTill(selectedData?.created_at)
+                  ? displayValidTill(selectedData.created_at)
                   : "-"}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-600">Last Opened:</span>
-              <span className="text-right">
-                {selectedData?.last_opened
-                  ? displayValidTill(selectedData?.last_opened)
+              <span className="font-medium text-gray-600">
+                Website Last Opened:
+              </span>
+              <span>
+                {selectedData?.website_last_opened
+                  ? displayValidTill(selectedData.website_last_opened)
                   : "-"}
               </span>
             </div>
-            {selectedData?.user_subscription?.length > 0 && (
-              <>
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    Subscription Details
-                  </h3>
-                  <div className="space-y-3 text-sm text-gray-700">
-                    {selectedData.user_subscription.map((sub, index) => (
-                      <div key={sub.id || index} className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-600">
-                            Subscription ID:
-                          </span>
-                          <span className="text-right">
-                            {sub.subscription_id}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-600">
-                            Amount:
-                          </span>
-                          <span className="text-right">${sub.amount}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-600">
-                            Status:
-                          </span>
-                          <span
-                            className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                              sub.status === "payment_successful"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-600"
-                            }`}
-                          >
-                            {sub.status.replace("_", " ")}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-600">
-                            Start Date:
-                          </span>
-                          <span className="text-right">
-                            {new Date(sub.start_date).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-600">
-                            End Date:
-                          </span>
-                          <span className="text-right">
-                            {new Date(sub.end_date).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Last Opened:
+              </span>
+              <span>
+                {selectedData?.fb_chatbot_last_opened
+                  ? displayValidTill(selectedData.fb_chatbot_last_opened)
+                  : "-"}
+              </span>
+            </div>
+
+            {/* Booleans */}
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Panda3 Bot:</span>
+              <span>{selectedData?.panda3_bot ? "Yes" : "No"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">New User:</span>
+              <span>{selectedData?.new_user ? "Yes" : "No"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Anonymous:</span>
+              <span>{selectedData?.is_anonymous ? "Yes" : "No"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Trial Active:
+              </span>
+              <span>
+                {selectedData?.fb_chatbot_trail_active ? "Yes" : "No"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Sub Active:
+              </span>
+              <span>
+                {selectedData?.fb_chatbot_subscription_active ? "Yes" : "No"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">User Blocked:</span>
+              <span>
+                {selectedData?.fb_chatbot_user_blocked ? "Yes" : "No"}
+              </span>
+            </div>
+
+            {/* FB Chatbot fields */}
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Trial Start:
+              </span>
+              <span>{selectedData?.fb_chatbot_trail_start_date || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Trial Expiry:
+              </span>
+              <span>{selectedData?.fb_chatbot_trail_expiry_date || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Version:
+              </span>
+              <span>{selectedData?.fb_chatbot_last_version || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Subscription Name:
+              </span>
+              <span>{selectedData?.fb_chatbot_subscription_name || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Subscription Expiry:
+              </span>
+              <span>
+                {selectedData?.fb_chatbot_subscription_expiry_date
+                  ? new Date(
+                      selectedData.fb_chatbot_subscription_expiry_date
+                    ).toLocaleDateString()
+                  : "-"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Webhook:
+              </span>
+              <span className="break-all">
+                {selectedData?.fb_chatbot_webhook || "-"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot OpenAI ID:
+              </span>
+              <span>{selectedData?.fb_chatbot_open_ai_id || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Prompt:
+              </span>
+              <span>{selectedData?.fb_chatbot_prompt || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">
+                FB Chatbot Leads Sheet:
+              </span>
+              <span className="break-all">
+                {selectedData?.fb_chatbot_leads_gs_link || "-"}
+              </span>
+            </div>
           </div>
+
+          {selectedData?.user_subscription?.length > 0 && (
+            <>
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-lg font-medium text-gray-800 mb-2">
+                  Subscription Details
+                </h3>
+                <div className="space-y-3 text-sm py-1text-gray-500">
+                  {selectedData.user_subscription.map((sub, index) => (
+                    <div key={sub.id || index} className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-600">
+                          Subscription ID:
+                        </span>
+                        <span className="text-right">
+                          {sub.subscription_id}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-600">
+                          Amount:
+                        </span>
+                        <span className="text-right">${sub.amount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-600">
+                          Status:
+                        </span>
+                        <span
+                          className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                            sub.status === "payment_successful"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-600"
+                          }`}
+                        >
+                          {sub.status.replace("_", " ")}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-600">
+                          Start Date:
+                        </span>
+                        <span className="text-right">
+                          {new Date(sub.start_date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-600">
+                          End Date:
+                        </span>
+                        <span className="text-right">
+                          {new Date(sub.end_date).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
     </>
