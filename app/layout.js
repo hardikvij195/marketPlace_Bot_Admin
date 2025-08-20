@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "FB MarketPlace Bot-Admin",
+  title: "FB Marketplace Chatbot - Admin",
 };
 
 export default function RootLayout({ children }) {

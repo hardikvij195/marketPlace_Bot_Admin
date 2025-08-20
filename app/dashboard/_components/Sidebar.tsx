@@ -102,7 +102,7 @@ export default function Sidebar({ collapsed }: SidebarProps) {
            
             {!collapsed && (
               <span className="ml-3 text-md font-semibold text-gray-800">
-               MarketPlaceBot
+               FB Marketplace Chatbot
               </span>
             )}
           </div>
