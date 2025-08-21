@@ -10,6 +10,12 @@
 !.yarn/releases
 !.yarn/versions
 
+# Ignore build artifacts
+.firebase/
+functions/.next/
+functions/node_modules/
+
+
 # testing
 /coverage
 
