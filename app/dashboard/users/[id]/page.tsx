@@ -9,6 +9,7 @@ import PaginationBar from "../../_components/Pagination";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+
 interface Subscription {
   amount: string;
   basic_amount: string;
@@ -31,7 +32,7 @@ interface UserSubscription {
 
 function UserSubscriptionsPage() {
   const { id:userId } = useParams();
-  const navigate = useRouter();
+  const router = useRouter();
 
   const [subscriptions, setSubscriptions] = useState<UserSubscription>();
   const [isLoading, setIsLoading] = useState(true);
@@ -80,12 +81,12 @@ function UserSubscriptionsPage() {
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div className="flex items-center space-x-4 mb-6">
-        <Link href='/dashboard/users'
+        <button   onClick={() => router.back()}
          
           className=""
         >
-         <ArrowLeft size={20} className="text-gray-500 cursor-pointer" />
-        </Link>
+         <ArrowLeft size={20} className="text-gray-500 hover:text-blue-600 cursor-pointer" />
+        </button>
         <h1 className="text-md font-semibold">
 
           <span className="text-blue-600">{subscriptions?.display_name}</span>

@@ -51,7 +51,7 @@ export const SearchAndFilter = ({
       <Select value={planFilter} onValueChange={onPlanFilterChange}>
         <SelectTrigger className="min-w-[180px] h-10 border-gray-300">
           <div className="flex items-center">
-            <SelectValue placeholder="Filter by plan" />
+            <SelectValue placeholder="All Plans" />
           </div>
         </SelectTrigger>
         <SelectContent>

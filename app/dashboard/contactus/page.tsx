@@ -199,7 +199,7 @@ export default function ContactUsPage() {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                   Subject
+                    Phone Number
                   </th>
                   <th
                     scope="col"
@@ -233,11 +233,12 @@ export default function ContactUsPage() {
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {contact.subject}
+                      {contact.phone}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 whitespace-pre-wrap break-words">
                       {contact.message}
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {new Intl.DateTimeFormat("en-US", {
                         year: "numeric",
@@ -249,15 +250,21 @@ export default function ContactUsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex items-center gap-4 ">
-                        {/* <Pencil className="h-4 w-4 text-gray-500 hover:text-blue-600 transition-colors duration-150 cursor-pointer" />   */}
-                        <Trash2
-                          className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors duration-150 cursor-pointer"
-                          // onClick={() => setPendingId(contact.id)}
+                        <Button
+                          disabled={loading}
                           onClick={() => {
                             setIsOpenDeleted(true);
                             setRowData(contact);
                           }}
+                          className="cursor-pointer p-2 rounded-md bg-gray-100 text-red-500 hover:bg-gray-200"
+                        >
+                        {/* <Pencil className="h-4 w-4 text-gray-500 hover:text-blue-600 transition-colors duration-150 cursor-pointer" />   */}
+                        <Trash2
+                          className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors duration-150 cursor-pointer"
+              
+                         
                         />
+                        </Button>
                         <button
                           disabled={loading}
                           onClick={() => {
@@ -347,8 +354,8 @@ export default function ContactUsPage() {
                 </a>
               </div>
 
-              <div className="font-medium">  Subject:</div>
-              <div>{selectedData?.subject}</div>
+              <div className="font-medium"> Phone Number:</div>
+              <div>{selectedData?.phone}</div>
 
               <div className="font-medium">Message:</div>
               <div>{selectedData?.message}</div>

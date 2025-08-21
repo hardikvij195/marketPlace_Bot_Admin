@@ -22,6 +22,8 @@ export default function DeleteModal({
   handleRefresh,
 }: DeleteModalProps) {
   const [loading, setLoading] = useState(false);
+
+  
   const confirmDelete = async () => {
     setLoading(true);
     try {

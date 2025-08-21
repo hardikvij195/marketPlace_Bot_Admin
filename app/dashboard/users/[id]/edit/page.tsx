@@ -23,7 +23,7 @@ export default async function EditUserPage({
     <div className="mx-auto py-2">
       <div className="flex items-center gap-2 mb-6">
         <Link href="/dashboard/users">
-          <ArrowLeft size={20} className="text-gray-500 cursor-pointer" />
+          <ArrowLeft size={20} className="text-gray-500 hover:text-blue-600 cursor-pointer" />
         </Link>
       
       </div>

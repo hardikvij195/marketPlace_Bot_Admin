@@ -52,6 +52,7 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       const { data, error, count } = await supabaseBrowser
         .from("users")
         .select("*", { count: "exact" })
+         .eq("role", "user")
         .order("created_at", { ascending: false });
       if (error) {
         throw new Error("Something went wrong!");
@@ -64,6 +65,25 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       });
     }
   };
+  const handleExportAdminFile = async () => {
+  try {
+    const { data, error, count } = await supabaseBrowser
+      .from("users")
+      .select("*", { count: "exact" })
+      .neq("role", "user") // 👈 exclude normal users
+      .order("created_at", { ascending: false });
+
+    if (error) throw new Error("Something went wrong!");
+
+    await exportToExcel(data, "admins");
+  } catch (error) {
+    showToast({
+      title: "Error",
+      description: "Something went wrong!",
+    });
+  }
+};
+
 
   const handleExportSubscriptionFile = async () => {
     try {
@@ -122,6 +142,8 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       });
     }
   };
+
+  
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -335,6 +357,8 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       return await handleExportUserFile();
     } else if (pathname === "/dashboard/subscription") {
       await handleExportSubscriptionFile();
+      }  else if (pathname === "/dashboard/admin") {
+      return await handleExportAdminFile();
     } else if (pathname === "/dashboard/invoices") {
       await handleExportInvoiceFile();
     } else if (pathname === "/dashboard/contactus") {
@@ -349,6 +373,7 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
       await handleExportToolFile();
     } else if (pathname === "/dashboard/recycle") {
       await handleExportRecycleBinFile();
+      
     } else if (pathname === "/dashboard/details") {
       const codeType = localStorage.getItem("subRoute");
       if (codeType === "registration") {

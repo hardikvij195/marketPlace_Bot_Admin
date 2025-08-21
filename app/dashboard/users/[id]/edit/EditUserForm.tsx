@@ -120,19 +120,38 @@ export default function EditUserForm({ user }: { user: User }) {
         value={formData.phone ?? ""}
         onChange={handleChange}
       />
-      <InputField
-        label="Subscription"
-        name="subscription"
-        value={formData.subscription ?? ""}
-        onChange={handleChange}
-      />
-      <InputField
-        label="Status"
-        name="status"
-        value={formData.status ?? ""}
-        onChange={handleChange}
-      />
-    
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">
+          Subscription
+        </label>
+        <select
+          name="subscription"
+          value={formData.subscription ?? ""}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md p-2 border border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+        >
+          <option value="">Select Subscription</option>
+          <option value="Trial Run">Trial Run</option>
+          <option value="Foundation Pack">Foundation Pack</option>
+          <option value="Growth Engine">Growth Engine</option>
+          <option value="Ultimate Advantage">Ultimate Advantage</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">
+          Status
+        </label>
+        <select
+          name="status"
+          value={formData.status ?? ""}
+          onChange={handleChange}
+          className="mt-1 block w-full p-2  rounded-md border border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+        >
+          <option value="">Select Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
 
       {/* Dates */}
       <InputField
@@ -144,12 +163,15 @@ export default function EditUserForm({ user }: { user: User }) {
       />
       <InputField
         label="FB Trail Start Date"
+        type="date"
         name="fb_chatbot_trail_start_date"
         value={formData.fb_chatbot_trail_start_date ?? ""}
         onChange={handleChange}
       />
+
       <InputField
         label="FB Trail Expiry Date"
+        type="date"
         name="fb_chatbot_trail_expiry_date"
         value={formData.fb_chatbot_trail_expiry_date ?? ""}
         onChange={handleChange}
@@ -169,7 +191,7 @@ export default function EditUserForm({ user }: { user: User }) {
         onChange={handleChange}
       />
 
-      {/* Textarea for prompts */}
+
       <div className="col-span-2">
         <label className="block text-sm font-semibold text-gray-700">
           FB Chatbot Prompt
@@ -177,8 +199,28 @@ export default function EditUserForm({ user }: { user: User }) {
         <Textarea
           name="fb_chatbot_prompt"
           value={formData.fb_chatbot_prompt ?? ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            if (e.target.value.length <= 3000) {
+              handleChange(e);
+            }
+          }}
+          disabled={formData.subscription !== "Ultimate Advantage"}
+          className={`${
+            formData.subscription !== "Ultimate Advantage"
+              ? "bg-gray-100 cursor-not-allowed"
+              : ""
+          }`}
         />
+       {formData.fb_chatbot_prompt &&
+  formData.fb_chatbot_prompt.length >= 3000 && (
+    <p className="text-red-500 text-sm mt-1">
+      Maximum 3000 characters allowed
+    </p>
+  )}
+
+        <p className="text-xs text-gray-500 mt-1">
+          {formData.fb_chatbot_prompt?.length ?? 0}/3000 characters
+        </p>
       </div>
 
       {/* Boolean Switches */}
@@ -247,12 +289,11 @@ export default function EditUserForm({ user }: { user: User }) {
 
       {/* Submit + Block Toggle */}
       <div className="col-span-2 flex gap-4">
-         <Link
-         href={`/dashboard/users/${user.id}`}
-          
+        <Link
+          href={`/dashboard/users/${user.id}`}
           className="w-48 py-2 px-3 text-md rounded-lg text-white disabled:opacity-50 bg-gray-600"
         >
-           Previous Subscriptions
+          Previous Subscriptions
         </Link>
         <button
           type="submit"
@@ -278,7 +319,6 @@ export default function EditUserForm({ user }: { user: User }) {
             ? "Unblock User"
             : "Block User"}
         </button>
-       
       </div>
     </form>
   );
@@ -325,7 +365,7 @@ function SwitchField({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <Switch checked={checked} onCheckedChange={onChange}/>
+      <Switch checked={checked} onCheckedChange={onChange} />
       <label className="text-sm font-semibold text-gray-700">{label}</label>
     </div>
   );

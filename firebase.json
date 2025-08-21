@@ -1,0 +1,7 @@
+{
+  "hosting": {
+    "source": ".",
+    "site": "fb-bot-admin",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+  }
+}

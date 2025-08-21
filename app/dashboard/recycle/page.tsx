@@ -183,7 +183,7 @@ export default function RecyclePage() {
 
       if (error) {
         throw new Error("Something went wrong!");
-        // roll back
+          
       }
       setDeleteRefresh(Math.random());
     } catch (error) {
@@ -193,42 +193,75 @@ export default function RecyclePage() {
       });
     }
   }
-  const restroeFiled = async (data: any) => {
-    setRestoreLoading(true);
-    try {
-      if (
-        data?.name == "seminar_registration" ||
-        data?.name == "seminar_signup"
-      ) {
-        delete data?.data?.seminars;
+const restroeFiled = async (data: any) => {
+  setRestoreLoading(true);
+  try {
+    let record = { ...data?.data };
+
+    if (data?.name == "seminar_registration" || data?.name == "seminar_signup") {
+      delete record.seminars;
+    }
+    if (data?.name == "invoice") {
+      delete record.users;
+    }
+    if (data?.name == "user_subscription") {
+      delete record.subscription;
+      delete record.users;
+    }
+
+    // Special case: restoring users with subscriptions
+    if (data?.name === "users") {
+      const subscriptions = record.user_subscription || [];
+      delete record.user_subscription;
+
+      // insert user first
+      const { error: userError } = await supabaseBrowser
+        .from("users")
+        .insert([record]);
+
+      if (userError) throw new Error(userError.message);
+
+      // insert subscriptions if available
+      if (subscriptions.length > 0) {
+        const { error: subError } = await supabaseBrowser
+          .from("user_subscription")
+          .insert(subscriptions);
+
+        if (subError) throw new Error(subError.message);
       }
-      if (data?.name == "invoice") {
-        delete data?.data?.users;
-      }
-      if (data?.name == "user_subscription") {
-        delete data?.data?.subscription;
-        delete data?.data?.users;
-      }
+    } else {
+      // normal insert
       const { error } = await supabaseBrowser
         .from(data?.name)
-        .insert([{ ...data?.data }]);
-      if (error) {
-        throw new Error(error?.message);
-      }
-      handleRefresh();
-      showToast({
-        title: "Success",
-        description: "Data restored.",
-      });
-    } catch (error) {
-      showToast({
-        title: "error",
-        description: "Something went wrong!",
-      });
-    } finally {
-      setRestoreLoading(false);
+        .insert([record]);
+
+      if (error) throw new Error(error.message);
     }
-  };
+
+    // now delete from recycle_bin
+    const { error: deleteError } = await supabaseBrowser
+      .from("recycle_bin")
+      .delete()
+      .eq("id", data.id);
+
+    if (deleteError) throw new Error(deleteError.message);
+
+    handleRefresh();
+    showToast({
+      title: "Success",
+      description: "Data restored successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    showToast({
+      title: "Error",
+      description: "Something went wrong while restoring!",
+    });
+  } finally {
+    setRestoreLoading(false);
+  }
+};
+
 
   return (
     <>
