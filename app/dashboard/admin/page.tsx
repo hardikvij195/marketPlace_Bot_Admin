@@ -16,6 +16,8 @@ import {
   Download,
   Archive,
   Search,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import ComingSoon from "@/components/ui/coming-soon";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
@@ -65,7 +67,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-    const [isOpenDeleted, setIsOpenDeleted] = useState(false);
+  const [isOpenDeleted, setIsOpenDeleted] = useState(false);
   const [newSem, setNewSem] = useState<User>({
     id: crypto.randomUUID(),
     email: "",
@@ -93,7 +95,8 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<any>(null);
-    const [rowData, setRowData] = useState<any>(null);
+  const [rowData, setRowData] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const totalPages = Math.ceil(total / limit);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -325,6 +328,20 @@ export default function AdminPage() {
           );
           throw new Error("Failed to set admin role or phone number!");
         }
+        try {
+        await fetch("https://hook.eu2.make.com/dx022ckz4pzpcnhdksgbn277fmf1ca7u", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: signUpData.user.id,
+            email: newSem.email,
+          }),
+        });
+      } catch (webhookError) {
+        console.error("Webhook call failed:", webhookError);
+      }
       } else {
         throw new Error("User creation succeeded but no user ID returned.");
       }
@@ -550,7 +567,7 @@ export default function AdminPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       <div className="flex items-center gap-4 ">
-                         <Button
+                        <Button
                           variant="ghost"
                           size="sm"
                           className="hover:bg-gray-200"
@@ -597,13 +614,13 @@ export default function AdminPage() {
               />
             </div>
             <DeleteModal
-                    rowData={rowData}
-                    isOpen={isOpenDeleted}
-                    setIsOpen={setIsOpenDeleted}
-                    setRowData={setRowData}
-                    handleRefresh={handleRefresh}
-                    name="users"
-                  />
+              rowData={rowData}
+              isOpen={isOpenDeleted}
+              setIsOpen={setIsOpenDeleted}
+              setRowData={setRowData}
+              handleRefresh={handleRefresh}
+              name="users"
+            />
           </div>
         )}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -681,19 +698,25 @@ export default function AdminPage() {
               </div>
 
               {/* Password ----------------------------------------------------- */}
-              <div className="space-y-1">
+              <div className="space-y-1 relative">
                 <label className="text-sm font-medium">Password</label>
-                <Input
-                  type="password"
-                  value={newSem.password}
-                  onChange={(e) => {
-                    setNewSem({
-                      ...newSem,
-                      password: e.target.value,
-                    });
-                  }}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={newSem.password}
+                    onChange={(e) =>
+                      setNewSem({ ...newSem, password: e.target.value })
+                    }
+                    required
+                    className="pr-10" // ensure space for icon
+                  />
+                  <span
+                    className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </span>
+                </div>
               </div>
             </div>
 
