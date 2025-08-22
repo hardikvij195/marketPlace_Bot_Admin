@@ -29,6 +29,7 @@ const pathName: any = {
   "/dashboard/recycle": "Recycle",
   "/dashboard/admin": "Admin Management",
   "/dashboard/users/[id]/edit": "Edit User Details",
+   "/dashboard/users/[id]/leads": "Edit Leads",
 };
 
 const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
@@ -419,6 +420,12 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
               pathname.endsWith("/edit")
             ) {
               title = pathName["/dashboard/users/[id]/edit"];
+            }
+              if (
+              pathname.startsWith("/dashboard/users/") &&
+              pathname.endsWith("/leads")
+            ) {
+              title = pathName["/dashboard/users/[id]/leads"];
             }
 
             if (pathname === "/dashboard" && userRole) {

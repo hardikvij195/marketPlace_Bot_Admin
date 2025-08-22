@@ -93,7 +93,7 @@ export default function Sidebar({ collapsed }: SidebarProps) {
     >
       {/* ────────────────── BRAND ────────────────── */}
       <div className="px-3 py-3 border-b border-gray-300 flex items-center justify-start">
-            <Image src='/Logo.png' alt="No Logo Found"  
+            <Image src='/LOGO.png' alt="No Logo Found"  
               // Show smaller logo when collapsed (desktop or mobile)
               width={collapsed ? 40 : 40}
               height={collapsed ? 40 : 40}
