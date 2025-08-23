@@ -24,6 +24,8 @@ import DeleteModal from "@/app/dashboard/_components/DeleteModal";
 import { displayValidTill } from "@/lib/dateTimeFormatter";
 import { toast } from "sonner";
 import Link from "next/link";
+import ShowUserId from "@/app/dashboard/_components/ShowUserId";
+import GoogleSheet from "@/app/dashboard/_components/GoogleSheet";
 interface User {
   id: string;
   display_name: string;
@@ -255,9 +257,14 @@ export const UserTable = ({
           <div className="space-y-3 text-sm text-gray-500">
             {/* Core fields */}
             <div className="flex justify-between">
-              <span className="font-medium text-gray-600">User ID:</span>
-              <span>{selectedData?.id}</span>
+             
+              <ShowUserId userId={selectedData?.id} />
+            
             </div>
+            <div className="flex justify-between">
+             {selectedData?.id && <GoogleSheet userId={selectedData.id} />}
+
+              </div>
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Name:</span>
               <span>{selectedData?.name || "-"}</span>
