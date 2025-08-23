@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,28 @@ export default function EditUserForm({ user }: { user: User }) {
   const [formData, setFormData] = useState<User>({ ...user });
   const [loading, setLoading] = useState(false);
   const [blockLoading, setBlockLoading] = useState(false);
+  const [isSuperadmin, setIsSuperadmin] = useState(false); // New state for superadmin check
+
+  // Use useEffect to fetch the logged-in user's role on component mount
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const { data: { session }, error: sessionError } = await supabaseBrowser.auth.getSession();
+      
+      if (session && !sessionError) {
+        const { data: loggedInUser, error: roleError } = await supabaseBrowser
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single();
+
+        if (!roleError && loggedInUser) {
+          setIsSuperadmin(loggedInUser.role === "superadmin");
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -191,7 +213,6 @@ export default function EditUserForm({ user }: { user: User }) {
         onChange={handleChange}
       />
 
-
       <div className="col-span-2">
         <label className="block text-sm font-semibold text-gray-700">
           FB Chatbot Prompt
@@ -200,27 +221,31 @@ export default function EditUserForm({ user }: { user: User }) {
           name="fb_chatbot_prompt"
           value={formData.fb_chatbot_prompt ?? ""}
           onChange={(e) => {
-            if (e.target.value.length <= 3000) {
+            // Allow superadmins to bypass the 3000-character limit
+            if (isSuperadmin || e.target.value.length <= 3000) {
               handleChange(e);
             }
           }}
-          disabled={formData.subscription !== "Ultimate Advantage"}
+          // Disable the field only for non-superadmins who don't have the "Ultimate Advantage" plan
+          disabled={!isSuperadmin && formData.subscription !== "Ultimate Advantage"}
           className={`${
-            formData.subscription !== "Ultimate Advantage"
+            !isSuperadmin && formData.subscription !== "Ultimate Advantage"
               ? "bg-gray-100 cursor-not-allowed"
               : ""
           }`}
         />
-       {formData.fb_chatbot_prompt &&
-  formData.fb_chatbot_prompt.length >= 3000 && (
-    <p className="text-red-500 text-sm mt-1">
-      Maximum 3000 characters allowed
-    </p>
-  )}
-
-        <p className="text-xs text-gray-500 mt-1">
-          {formData.fb_chatbot_prompt?.length ?? 0}/3000 characters
-        </p>
+        {/* The character limit warning is now only shown to non-superadmins */}
+        {!isSuperadmin && formData.fb_chatbot_prompt && formData.fb_chatbot_prompt.length >= 3000 && (
+          <p className="text-red-500 text-sm mt-1">
+            Maximum 3000 characters allowed
+          </p>
+        )}
+        {/* The character counter is also only shown to non-superadmins */}
+        {!isSuperadmin && (
+          <p className="text-xs text-gray-500 mt-1">
+            {formData.fb_chatbot_prompt?.length ?? 0}/3000 characters
+          </p>
+        )}
       </div>
 
       {/* Boolean Switches */}

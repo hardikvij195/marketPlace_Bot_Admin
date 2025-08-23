@@ -129,7 +129,7 @@ export default function AdminPage() {
       let query = supabaseBrowser
         .from("users")
         .select("*", { count: "exact" })
-        .in("role", ["admin", "superadmin"]); // Fetch both admin and superadmin roles
+        .in("role", ["admin", "superadmin"]);
 
       if (searchTerm) {
         query = query.or(
@@ -194,7 +194,6 @@ export default function AdminPage() {
     const userToRemove = userToDelete;
     setIsDeleting(true);
 
-    // Optimistic UI update
     setAdmins((prev) => prev.filter((s) => s.id !== userToRemove.id));
     setUserToDelete(null);
 
@@ -222,7 +221,7 @@ export default function AdminPage() {
           description:
             result?.message || "Something went wrong during deletion!",
         });
-        // Revert optimistic UI if deletion fails
+      
         setAdmins((prev) => [...prev, userToRemove]);
       } else {
         console.log("User deleted successfully:", result);
@@ -239,7 +238,7 @@ export default function AdminPage() {
         title: "Error",
         description: error.message || "Something went wrong during deletion!",
       });
-      // Revert optimistic UI if deletion fails
+   
       setAdmins((prev) => [...prev, userToRemove]);
     } finally {
       setIsDeleting(false);
@@ -315,7 +314,7 @@ export default function AdminPage() {
           .from("users")
           .insert({
             id: signUpData.user.id,
-            email: newSem.email, // Added the email here
+            email: newSem.email, 
             name: newSem.name,
             phone: newSem.phone,
             role: newSem.role,
@@ -436,7 +435,6 @@ export default function AdminPage() {
     }
   };
 
-  // Helper function to format role for display
   const formatRole = (role: string | undefined) => {
     if (!role) return "";
     return role === "superadmin"
