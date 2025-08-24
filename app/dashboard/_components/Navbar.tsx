@@ -44,7 +44,6 @@ const Navbar = ({ setCollapsed, collapsed }: NavbarProps) => {
   }, []);
 
   const handleRefresh = () => {
-    // Custom logic to refresh data or reload the page
     window.location.reload();
   };
 

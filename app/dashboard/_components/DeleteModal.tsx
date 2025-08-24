@@ -27,23 +27,45 @@ export default function DeleteModal({
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      const { error } = await supabaseBrowser
-        .from(name)
-        .delete()
-        .eq("id", rowData?.id);
-      if (error) {
-        throw new Error(error?.message);
+      // First, save the row to recycle_bin
+      await supabaseBrowser.from("recycle_bin").insert([{ name, data: rowData }]);
+
+      if (name === "users") {
+        // Delete user via API route
+        const res = await fetch("/api/delete-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: rowData?.id,
+            admin_key: process.env.NEXT_PUBLIC_ADMIN_KEY, // for dev only
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to delete user");
+
+      } else {
+        // Delete from normal table
+        const { error } = await supabaseBrowser
+          .from(name)
+          .delete()
+          .eq("id", rowData?.id);
+        if (error) throw new Error(error.message);
       }
-      await supabaseBrowser
-        .from("recycle_bin")
-        .insert([{ name, data: rowData }]);
+
       setIsOpen(false);
       setRowData(null);
       handleRefresh();
-    } catch (error) {
+
+      showToast({
+        title: "Success",
+        description: `${name === "users" ? "User" : name} deleted successfully`,
+      });
+    } catch (error: any) {
       showToast({
         title: "Error",
-        description: "Something went wrong.",
+        description: error.message || "Something went wrong.",
       });
     } finally {
       setLoading(false);
