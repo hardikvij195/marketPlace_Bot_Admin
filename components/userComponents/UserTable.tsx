@@ -14,7 +14,7 @@ import {
   CheckCircle,
   Pencil,
   File,
-  Users
+  Users,
 } from "lucide-react";
 import Modal from "@/app/dashboard/_components/Modal";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
@@ -71,6 +71,8 @@ export const UserTable = ({
   const [isOpenDeleted, setIsOpenDeleted] = useState(false);
   const [rowData, setRowData] = useState<any>(null);
   const [selectedData, setSelectedData] = useState<any>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleRefresh = () => {
     setPage(1);
     if (setDeleteRefresh) {
@@ -98,6 +100,34 @@ export const UserTable = ({
       handleRefresh();
     }
   };
+
+  const handleDeleteUser = async () => {
+    if (!rowData) return;
+    try {
+      setLoading(true);
+      const res = await fetch("/api/delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: rowData.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to delete user");
+        return;
+      }
+
+      toast.success("User deleted successfully!");
+      handleRefresh();
+      setIsConfirmOpen(false);
+      setRowData(null);
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -179,7 +209,7 @@ export const UserTable = ({
                         size="sm"
                         className="hover:bg-gray-200"
                         onClick={() => {
-                          setIsOpenDeleted(true);
+                          setIsConfirmOpen(true);
                           setRowData(user);
                         }}
                       >
@@ -230,14 +260,35 @@ export const UserTable = ({
           />
         </div>
       </div>
-      <DeleteModal
-        rowData={rowData}
-        isOpen={isOpenDeleted}
-        setIsOpen={setIsOpenDeleted}
-        setRowData={setRowData}
-        name="users"
-        handleRefresh={handleRefresh}
-      />
+
+      <Modal isOpen={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
+        
+          <h2 className="text-lg font-semibold mb-2">
+            Are you sure?
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+           This action cannot be undone.
+      
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => setIsConfirmOpen(false)}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteUser}
+              disabled={loading}
+            >
+              {loading ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
+       
+      </Modal>
+
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="max-w-md max-h-[90vh] overflow-y-auto mx-auto bg-white p-6">
           <div className="flex justify-between items-center border-b pb-4 mb-4">
@@ -258,14 +309,11 @@ export const UserTable = ({
           <div className="space-y-3 text-sm text-gray-500">
             {/* Core fields */}
             <div className="flex justify-between">
-             
               <ShowUserId userId={selectedData?.id} />
-            
             </div>
             <div className="flex justify-between">
-             {selectedData?.id && <GoogleSheet userId={selectedData.id} />}
-
-              </div>
+              {selectedData?.id && <GoogleSheet userId={selectedData.id} />}
+            </div>
             <div className="flex justify-between">
               <span className="font-medium text-gray-600">Name:</span>
               <span>{selectedData?.name || "-"}</span>

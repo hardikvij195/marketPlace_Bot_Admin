@@ -126,23 +126,34 @@ export default function LeadsPage() {
     }
   };
 
-  // Fetch leads whenever the page, limit, or a refresh signal changes
+
   useEffect(() => {
     handleFetchLeads();
   }, [page, deleteRefresh, limit]);
 
-  // Filter leads based on the search term
-  const filteredLeads = useMemo(() => {
-    if (!searchTerm.trim()) {
-      return leads;
-    }
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
-    return leads.filter(
-      (lead) =>
-        lead.name.toLowerCase().includes(lowercasedSearchTerm) ||
-        lead.email.toLowerCase().includes(lowercasedSearchTerm)
+const filteredLeads = useMemo(() => {
+  if (!searchTerm.trim()) {
+    return leads;
+  }
+  const lowercasedSearchTerm = searchTerm.toLowerCase();
+  return leads.filter((lead) => {
+    const createdDate = lead.created_date
+      ? new Date(lead.created_date).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+      : "";
+
+    return (
+      (lead.name?.toLowerCase() ?? "").includes(lowercasedSearchTerm) ||
+      (lead.email?.toLowerCase() ?? "").includes(lowercasedSearchTerm) ||
+      (lead.phone?.toLowerCase() ?? "").includes(lowercasedSearchTerm) ||
+      createdDate.toLowerCase().includes(lowercasedSearchTerm)
     );
-  }, [leads, searchTerm]);
+  });
+}, [leads, searchTerm]);
+
 
   if (loading) {
     return (
@@ -289,7 +300,7 @@ export default function LeadsPage() {
         <div className="relative flex-1 mb-5">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by Lead Name or Email..."
+            placeholder="Search by Lead Name, Email, Phone or Lead Date..."
             className="pl-9 border-gray-200" // Updated border color here
             value={searchTerm}
             disabled={loading}
@@ -647,7 +658,7 @@ export default function LeadsPage() {
                   Name <sup>*</sup>{" "}
                 </label>
                 <Input
-                  value={editLead?.name}
+                  value={editLead?.name ?? ""}
                   onChange={(e) =>
                     setEditLead({ ...editLead, name: e.target.value })
                   }
@@ -656,11 +667,11 @@ export default function LeadsPage() {
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-medium">
-                  Email <sup>*</sup>{" "}
+                  Email <sup>*</sup>
                 </label>
                 <Input
                   type="email"
-                  value={editLead?.email}
+                  value={editLead?.email ?? ""}
                   onChange={(e) =>
                     setEditLead({ ...editLead, email: e.target.value })
                   }
@@ -673,7 +684,7 @@ export default function LeadsPage() {
                 </label>
                 <Input
                   type="tel"
-                  value={editLead?.phone}
+                  value={editLead?.phone ?? ""}
                   onChange={(e) =>
                     setEditLead({ ...editLead, phone: e.target.value })
                   }
@@ -683,7 +694,7 @@ export default function LeadsPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">Conversation</label>
                 <Textarea
-                  value={editLead.convo}
+                  value={editLead.convo ?? ""}
                   onChange={(e) =>
                     setEditLead({ ...editLead, convo: e.target.value })
                   }
@@ -693,7 +704,7 @@ export default function LeadsPage() {
               <div className="space-y-1">
                 <label className="text-sm font-medium">Notes</label>
                 <Textarea
-                  value={editLead.notes}
+                  value={editLead.notes ?? ""}
                   onChange={(e) =>
                     setEditLead({ ...editLead, notes: e.target.value })
                   }
