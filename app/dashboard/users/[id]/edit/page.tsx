@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import ShowUserId from "../../../_components/ShowUserId";
 import GoogleSheet from "../../../_components/GoogleSheet"
+import FbChatBotLink from "../../../_components/FbChatBotLink"
 
 export default async function EditUserPage({
   params,
@@ -34,8 +35,11 @@ export default async function EditUserPage({
         </Link>
       </div>
 
+ 
       <ShowUserId userId={id} />
       <GoogleSheet userId={id} />
+      <FbChatBotLink userId={id} />
+ 
 
       <EditUserForm user={user} />
     </div>

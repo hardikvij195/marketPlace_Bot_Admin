@@ -9,7 +9,7 @@ import { Copy } from "lucide-react";
 import { showToast } from "@/hooks/useToast";
 
 interface SheetPageProps {
-  userId: string | null; // ✅ get userId from parent
+  userId: string | null; 
 }
 
 export default function SheetPage({ userId }: SheetPageProps) {
@@ -23,7 +23,7 @@ export default function SheetPage({ userId }: SheetPageProps) {
       const { data, error } = await supabaseBrowser
         .from("users")
         .select("fb_chatbot_leads_gs_link")
-        .eq("id", userId) // ✅ use passed userId instead of logged-in
+        .eq("id", userId)
         .single();
 
       if (error) {
@@ -79,7 +79,7 @@ export default function SheetPage({ userId }: SheetPageProps) {
   if (!userId) return null; // ✅ don't render if no userId
 
   return (
-    <div className="flex gap-3 px-2 items-center">
+    <div className="flex gap-3 px-2 items-center pt-4">
       <span className="text-md font-medium">Google Sheet for Leads :</span>
 
       <button onClick={handleOpen} className="focus:outline-none">
