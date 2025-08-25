@@ -49,7 +49,7 @@ import Modal from "../_components/Modal";
 import { exportToExcel } from "@/lib/exportToExcel";
 import { showToast } from "@/hooks/useToast";
 import PaginationBar from "../_components/Pagination";
-import DeleteModal from "../_components/DeleteModal";
+import DeleteModal2 from "../_components/DeleteModal2";
 import { displayValidTill } from "@/lib/dateTimeFormatter";
 
 type Sub = {
@@ -490,7 +490,7 @@ export default function SubscriptionsTable() {
         
       </div>
 
-      <DeleteModal
+      <DeleteModal2
         rowData={rowData}
         isOpen={isOpenDeleted}
         setIsOpen={setIsOpenDeleted}

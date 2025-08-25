@@ -1,8 +1,8 @@
 "use client";
 
-import { showToast } from "@/hooks/useToast";
-import { supabaseBrowser } from "@/lib/supabaseBrowser";
-import { useEffect, useState } from "react";
+import { showToast } from "../../../hooks/useToast";
+import { supabaseBrowser } from "../../../lib/supabaseBrowser";
+import { useState } from "react";
 
 interface DeleteModalProps {
   isOpen: boolean;
@@ -23,33 +23,42 @@ export default function DeleteModal({
 }: DeleteModalProps) {
   const [loading, setLoading] = useState(false);
 
-  
   const confirmDelete = async () => {
+    
     setLoading(true);
     try {
-      await supabaseBrowser.from("recycle_bin").insert([{ name, data: rowData }]);
 
-      if (name === "users") {
-        const res = await fetch("/api/delete-user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const {
+      data: { user: authUser },
+      error: authError,
+    } = await supabaseBrowser.auth.getUser();
+
+    if (authError || !authUser) {
+      throw new Error("Failed to get logged-in user");
+    }
+      // First, insert the row into recycle_bin
+      const { error: recycleError } = await supabaseBrowser
+        .from("recycle_bin")
+        .insert([
+          {
+            name,        // table name
+            data: rowData,
+            user_id: authUser.id // deleted row data
           },
-          body: JSON.stringify({
-            user_id: rowData?.id,
-            admin_key: process.env.NEXT_PUBLIC_ADMIN_KEY, 
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to delete user");
+        ]);
 
-      } else {
-        // Delete from normal table
-        const { error } = await supabaseBrowser
-          .from(name)
-          .delete()
-          .eq("id", rowData?.id);
-        if (error) throw new Error(error.message);
+      if (recycleError) {
+        throw new Error(recycleError.message);
+      }
+
+      // Then delete from the main table
+      const { error } = await supabaseBrowser
+        .from(name)
+        .delete()
+        .eq("id", rowData?.id);
+
+      if (error) {
+        throw new Error(error.message);
       }
 
       setIsOpen(false);
@@ -58,12 +67,12 @@ export default function DeleteModal({
 
       showToast({
         title: "Success",
-        description: `${name === "users" ? "User" : name} deleted successfully`,
+        description: `${name} deleted successfully and saved to recycle_bin.`,
       });
     } catch (error: any) {
       showToast({
         title: "Error",
-        description: error.message || "Something went wrong.",
+        description: error?.message || "Something went wrong.",
       });
     } finally {
       setLoading(false);

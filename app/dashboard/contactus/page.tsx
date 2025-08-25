@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { exportToExcel } from "@/lib/exportToExcel";
 import { showToast } from "@/hooks/useToast";
 import PaginationBar from "../_components/Pagination";
-import DeleteModal from "../_components/DeleteModal";
+import DeleteModal2 from "../_components/DeleteModal2";
 import { Input } from "@/components/ui/input";
 
 type Contact = {
@@ -326,7 +326,7 @@ export default function ContactUsPage() {
           </div>
         )}
       </div>
-      <DeleteModal
+      <DeleteModal2
         rowData={rowData}
         isOpen={isOpenDeleted}
         setIsOpen={setIsOpenDeleted}
